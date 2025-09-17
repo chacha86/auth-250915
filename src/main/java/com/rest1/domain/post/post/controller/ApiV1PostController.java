@@ -121,10 +121,18 @@ public class ApiV1PostController {
     @Operation(summary = "글 수정")
     public RsData<Void> modifyItem(
             @PathVariable Long id,
-            @RequestBody @Valid PostModifyReqBody reqBody
+            @RequestBody @Valid PostModifyReqBody reqBody,
+            @RequestHeader("Authorization") @NotBlank @Size(min=30, max=50) String apiKey
     ) {
 
+        String authorization = apiKey.replace("Bearer ", "");
+        Member actor = memberService.findByApiKey(authorization).orElseThrow(() -> new ServiceException("401-1", "API 키가 올바르지 않습니다."));
         Post post = postService.findById(id).get();
+
+        // 권한 체크
+        if(!actor.equals(post.getAuthor())) throw new ServiceException("403-1", "수정 권한이 없습니다.");
+
+        // 수정 로직
         postService.modify(post, reqBody.title, reqBody.content);
 
         return new RsData(
