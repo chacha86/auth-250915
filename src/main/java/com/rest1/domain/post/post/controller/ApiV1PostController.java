@@ -87,10 +87,12 @@ public class ApiV1PostController {
     @Operation(summary = "글 작성")
     public RsData<PostWriteResBody> createItem(
             @RequestBody @Valid PostWriteReqBody reqBody,
-            @NotBlank @Size(min=30, max=40) String apiKey
+            @RequestHeader("Authorization") @NotBlank @Size(min=30, max=50) String apiKey
     ) {
 
-        Member actor = memberService.findByApiKey(apiKey).orElseThrow(() -> new ServiceException("401-1", "API 키가 올바르지 않습니다."));
+        String authorization = apiKey.replace("Bearer ", "");
+
+        Member actor = memberService.findByApiKey(authorization).orElseThrow(() -> new ServiceException("401-1", "API 키가 올바르지 않습니다."));
         Post post = postService.write(actor, reqBody.title, reqBody.content);
 
         return new RsData<>(
