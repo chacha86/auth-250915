@@ -410,4 +410,60 @@ public class ApiV1PostControllerTest {
                 .andExpect(jsonPath("$.resultCode").value("401-3"))
                 .andExpect(jsonPath("$.msg").value("API 키가 올바르지 않습니다."));
     }
+
+    @Test
+    @DisplayName("글 수정, 권한 체크 - 글 작성자가 아닌 경우")
+    void t13() throws Exception {
+        long targetId = 1;
+        String title = "제목 수정";
+        String content = "내용 수정";
+
+        Member author = memberRepository.findByUsername("user2").get();
+
+        ResultActions resultActions = mvc
+                .perform(
+                        put("/api/v1/posts/%d".formatted(targetId))
+                                .header("Authorization", "Bearer %s".formatted(author.getApiKey()))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                            "title": "%s",
+                                            "content": "%s"
+                                        }
+                                        """.formatted(title, content))
+                )
+                .andDo(print());
+
+        // 필수 검증
+        resultActions
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("modifyItem"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.resultCode").value("403-1"))
+                .andExpect(jsonPath("$.msg").value("수정 권한이 없습니다."));
+    }
+
+    @Test
+    @DisplayName("글 삭제, 권한 체크 - 글 작성자가 아닌 경우")
+    void t14() throws Exception {
+        long targetId = 1;
+
+        Member author = memberRepository.findByUsername("user2").get();
+
+        ResultActions resultActions = mvc
+                .perform(
+                        delete("/api/v1/posts/%d".formatted(targetId))
+                                .header("Authorization", "Bearer %s".formatted(author.getApiKey()))
+                )
+                .andDo(print());
+
+        // 필수 검증
+        resultActions
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("deleteItem"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.resultCode").value("403-2"))
+                .andExpect(jsonPath("$.msg").value("삭제 권한이 없습니다."));
+
+    }
 }
