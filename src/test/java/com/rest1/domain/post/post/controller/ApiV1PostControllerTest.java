@@ -146,7 +146,7 @@ public class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("글 작성, 제목이 입력되지 않은 경우")
-    void t7() throws Exception {
+    void t4() throws Exception {
         String title = "";
         String content = "내용입니다";
         Member author = memberRepository.findByUsername("user1").get();
@@ -180,7 +180,7 @@ public class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("글 작성, 내용이 입력되지 않은 경우")
-    void t8() throws Exception {
+    void t5() throws Exception {
         String title = "제목입니다.";
         String content = "";
         Member author = memberRepository.findByUsername("user1").get();
@@ -212,7 +212,7 @@ public class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("글 작성, JSON 양식이 잘못된 경우")
-    void t9() throws Exception {
+    void t6() throws Exception {
         String title = "제목입니다.";
         String content = "내용입니다";
         Member author = memberRepository.findByUsername("user1").get();
@@ -241,7 +241,7 @@ public class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("글 수정")
-    void t4() throws Exception {
+    void t7() throws Exception {
         long targetId = 1;
         String title = "제목 수정";
         String content = "내용 수정";
@@ -279,7 +279,7 @@ public class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("글 삭제")
-    void t5() throws Exception {
+    void t8() throws Exception {
         long targetId = 1;
 
         Member author = memberRepository.findByUsername("user1").get();
@@ -306,7 +306,7 @@ public class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("글 단건 조회, 존재하지 않는 글")
-    void t6() throws Exception {
+    void t9() throws Exception {
         long targetId = Integer.MAX_VALUE;
 
         ResultActions resultActions = mvc

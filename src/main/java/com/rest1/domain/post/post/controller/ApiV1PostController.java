@@ -6,6 +6,7 @@ import com.rest1.domain.post.post.dto.PostDto;
 import com.rest1.domain.post.post.entity.Post;
 import com.rest1.domain.post.post.service.PostService;
 import com.rest1.global.exception.ServiceException;
+import com.rest1.global.rq.Rq;
 import com.rest1.global.rsData.RsData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +27,7 @@ public class ApiV1PostController {
 
     private final PostService postService;
     private final MemberService memberService;
+    private final Rq rq;
 
 
     @GetMapping
@@ -44,6 +46,10 @@ public class ApiV1PostController {
     public PostDto getItem(
             @PathVariable Long id
     ) {
+
+        System.out.println("memberService : " + memberService);
+        System.out.println("rq : " + rq);
+
 
         Post post = postService.findById(id).get();
         return new PostDto(post);
