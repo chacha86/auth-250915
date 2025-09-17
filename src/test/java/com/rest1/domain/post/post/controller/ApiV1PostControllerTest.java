@@ -186,9 +186,12 @@ public class ApiV1PostControllerTest {
     void t5() throws Exception {
         long targetId = 1;
 
+        Member author = memberRepository.findByUsername("user1").get();
+
         ResultActions resultActions = mvc
                 .perform(
                         delete("/api/v1/posts/%d".formatted(targetId))
+                                .header("Authorization", "Bearer %s".formatted(author.getApiKey()))
                 )
                 .andDo(print());
 
