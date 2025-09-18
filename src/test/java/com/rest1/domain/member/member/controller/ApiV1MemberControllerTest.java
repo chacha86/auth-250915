@@ -143,7 +143,7 @@ public class ApiV1MemberControllerTest {
                     assertThat(apiKeyCookie.getDomain()).isEqualTo("localhost");
                     assertThat(apiKeyCookie.isHttpOnly()).isEqualTo(true);
 
-                    if(apiKeyCookie != null) {
+                    if (apiKeyCookie != null) {
                         assertThat(apiKeyCookie.getValue()).isNotBlank();
                     }
                 }
@@ -168,10 +168,12 @@ public class ApiV1MemberControllerTest {
                 .andExpect(jsonPath("$.msg").value("로그아웃 되었습니다."))
                 .andExpect(result -> {
                     Cookie apiKeyCookie = result.getResponse().getCookie("apiKey");
+
                     assertThat(apiKeyCookie.getValue()).isEmpty();
                     assertThat(apiKeyCookie.getMaxAge()).isEqualTo(0);
                     assertThat(apiKeyCookie.getPath()).isEqualTo("/");
                     assertThat(apiKeyCookie.isHttpOnly()).isTrue();
+
                 });
     }
 
