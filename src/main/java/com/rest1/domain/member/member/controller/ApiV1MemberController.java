@@ -6,6 +6,8 @@ import com.rest1.domain.member.member.service.MemberService;
 import com.rest1.global.exception.ServiceException;
 import com.rest1.global.rq.Rq;
 import com.rest1.global.rsData.RsData;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -74,7 +76,8 @@ public class ApiV1MemberController {
 
     @PostMapping("/login")
     public RsData<MemberDto> login(
-            @RequestBody @Valid LoginReqBody reqBody
+            @RequestBody @Valid LoginReqBody reqBody,
+            HttpServletResponse response
     ) {
 
         Member member = memberService.findByUsername(reqBody.username).orElseThrow(
@@ -84,6 +87,10 @@ public class ApiV1MemberController {
         if (!member.getPassword().equals(reqBody.password)) {
             throw new ServiceException("401-2", "비밀번호가 일치하지 않습니다.");
         }
+
+        response.addCookie(
+                new Cookie("apiKey", member.getApiKey())
+        );
 
         return new RsData(
                 "200-1",
