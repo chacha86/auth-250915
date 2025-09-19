@@ -13,6 +13,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final AuthTokenService authTokenService;
 
     public long count() {
         return memberRepository.count();
@@ -35,5 +36,9 @@ public class MemberService {
 
     public Optional<Member> findByApiKey(String apiKey) {
         return memberRepository.findByApiKey(apiKey);
+    }
+
+    public String genAccessToken(Member member) {
+        return authTokenService.genAccessToken(member);
     }
 }
