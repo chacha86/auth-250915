@@ -60,7 +60,7 @@ public class Ut {
             SecretKey secretKey = Keys.hmacShaKeyFor(secretPattern.getBytes(StandardCharsets.UTF_8));
 
             if(isValid(jwt, secretPattern)) {
-                return  (Map<String, Object>) Jwts
+                return (Map<String, Object>) Jwts
                         .parser()
                         .verifyWith(secretKey)
                         .build()

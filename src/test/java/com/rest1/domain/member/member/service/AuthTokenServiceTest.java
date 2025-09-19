@@ -106,7 +106,17 @@ public class AuthTokenServiceTest {
         String accessToken = authTokenService.genAccessToken(member1);
         assertThat(accessToken).isNotBlank();
 
+        Map<String, Object> payload = authTokenService.payloadOrNull(accessToken);
+
+        assertThat(payload).containsAllEntriesOf(
+                Map.of(
+                        "id", member1.getId(),
+                        "username", member1.getUsername()
+                )
+        );
+
         System.out.println("accessToken = " + accessToken);
+
 
     }
 }
