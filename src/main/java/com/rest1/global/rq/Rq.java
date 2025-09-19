@@ -91,6 +91,7 @@ public class Rq {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        cookie.setDomain("localhost");
 
         // 값이 없다면 해당 쿠키변수를 삭제하라는 뜻
         if (value.isBlank()) {
