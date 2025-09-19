@@ -90,7 +90,7 @@ public class AuthTokenServiceTest {
         boolean validResult = Ut.jwt.isValid(jwt, secretPattern);
         assertThat(validResult).isTrue();
 
-        Map<String, Object> parsedPayload = Ut.jwt.payload(jwt, secretPattern);
+        Map<String, Object> parsedPayload = Ut.jwt.payloadOrNull(jwt, secretPattern);
 
         assertThat(parsedPayload)
                 .containsAllEntriesOf(payload);
