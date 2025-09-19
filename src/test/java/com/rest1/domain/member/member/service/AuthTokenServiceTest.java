@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,12 +27,14 @@ public class AuthTokenServiceTest {
     @Autowired
     private AuthTokenService authTokenService;
 
-    private long expireSeconds = 1000L * 60 * 60 * 24 * 365;
-    private String secretPattern= "abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890";
-    @Autowired
-    private MemberService memberService;
     @Autowired
     private MemberRepository memberRepository;
+
+    @Value("${custom.jwt.secretPattern}")
+    private String secretPattern;
+
+    @Value("${custom.jwt.expireSeconds}")
+    private long expireSeconds;
 
     @Test
     @DisplayName("authTokenService 서비스가 존재한다.")
