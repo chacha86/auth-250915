@@ -2,11 +2,13 @@ package com.rest1.domain.member.member.controller;
 
 import com.rest1.domain.member.member.entity.Member;
 import com.rest1.domain.member.member.repository.MemberRepository;
+import com.rest1.standard.ut.Ut;
 import jakarta.servlet.http.Cookie;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -31,6 +33,9 @@ public class ApiV1MemberControllerTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Value("${custom.jwt.secretPattern}")
+    private String secretPattern;
 
     @Test
     @DisplayName("회원 가입")
@@ -218,11 +223,14 @@ public class ApiV1MemberControllerTest {
     void t6() throws Exception {
         Member actor = memberRepository.findByUsername("user1").get();
         String actorApiKey = actor.getApiKey();
+        String wrongAccessToken = "wrong-access-token";
+
+        assertThat(Ut.jwt.isValid(wrongAccessToken, secretPattern)).isFalse();
 
         ResultActions resultActions = mvc
                 .perform(
                         get("/api/v1/members/me")
-                                .cookie(new Cookie("apiKey", actorApiKey), new Cookie("accessToken", "wrong-access-token"))
+                                .cookie(new Cookie("apiKey", actorApiKey), new Cookie("accessToken", wrongAccessToken))
                 )
                 .andDo(print());
 
@@ -230,5 +238,19 @@ public class ApiV1MemberControllerTest {
                 .andExpect(handler().handlerType(ApiV1MemberController.class))
                 .andExpect(handler().methodName("me"))
                 .andExpect(status().isOk());
+
+        resultActions
+                .andExpect((result) -> {
+                    Cookie apiKeyCookie = result.getResponse().getCookie("accessToken");
+                    assertThat(apiKeyCookie).isNotNull();
+
+                    assertThat(apiKeyCookie.getPath()).isEqualTo("/");
+                    assertThat(apiKeyCookie.getDomain()).isEqualTo("localhost");
+                    assertThat(apiKeyCookie.isHttpOnly()).isEqualTo(true);
+
+                    String newAccessToken = apiKeyCookie.getValue();
+
+                    assertThat(Ut.jwt.isValid(newAccessToken, secretPattern)).isTrue();
+                });
     }
 }
