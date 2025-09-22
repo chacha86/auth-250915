@@ -170,7 +170,7 @@ public class ApiV1PostControllerTest {
                 .andExpect(handler().methodName("createItem"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("401-1"))
-                .andExpect(jsonPath("$.msg").value("헤더에 인증 정보가 없습니다."));
+                .andExpect(jsonPath("$.msg").value("로그인 후 이용해주세요."));
     }
 
     @Test
@@ -378,7 +378,7 @@ public class ApiV1PostControllerTest {
                 .andExpect(handler().methodName("createItem"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("401-2"))
-                .andExpect(jsonPath("$.msg").value("헤더의 인증 정보 형식이 올바르지 않습니다."));
+                .andExpect(jsonPath("$.msg").value("Authorization 헤더가 Bearer 형식이 아닙니다."));
     }
 
     @Test
@@ -408,7 +408,7 @@ public class ApiV1PostControllerTest {
                 .andExpect(handler().methodName("createItem"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("401-3"))
-                .andExpect(jsonPath("$.msg").value("API 키가 올바르지 않습니다."));
+                .andExpect(jsonPath("$.msg").value("API 키가 유효하지 않습니다."));
     }
 
     @Test
