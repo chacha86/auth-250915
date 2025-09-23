@@ -422,8 +422,6 @@ public class ApiV1PostControllerTest {
                 .andDo(print());
 
         resultActions
-                .andExpect(handler().handlerType(ApiV1PostController.class))
-                .andExpect(handler().methodName("createItem"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("401-2"))
                 .andExpect(jsonPath("$.msg").value("Authorization 헤더가 Bearer 형식이 아닙니다."));
@@ -452,8 +450,6 @@ public class ApiV1PostControllerTest {
                 .andDo(print());
 
         resultActions
-                .andExpect(handler().handlerType(ApiV1PostController.class))
-                .andExpect(handler().methodName("createItem"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("401-3"))
                 .andExpect(jsonPath("$.msg").value("API 키가 유효하지 않습니다."));
