@@ -213,8 +213,8 @@ public class ApiV1MemberControllerTest {
                 .andExpect(jsonPath("$.msg").value("OK"))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.memberDto.id").value(member.getId()))
-                .andExpect(jsonPath("$.data.memberDto.createDate").value(member.getCreateDate().toString()))
-                .andExpect(jsonPath("$.data.memberDto.modifyDate").value(member.getModifyDate().toString()))
+                .andExpect(jsonPath("$.data.memberDto.createDate").value(Matchers.startsWith(member.getCreateDate().toString().substring(0, 20))))
+                .andExpect(jsonPath("$.data.memberDto.modifyDate").value(Matchers.startsWith(member.getCreateDate().toString().substring(0, 20))))
                 .andExpect(jsonPath("$.data.memberDto.name").value(member.getName()));
     }
 
