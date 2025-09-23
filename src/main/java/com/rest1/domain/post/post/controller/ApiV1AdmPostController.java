@@ -1,7 +1,6 @@
 package com.rest1.domain.post.post.controller;
 
 import com.rest1.domain.post.post.service.PostService;
-import com.rest1.global.rq.Rq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiV1AdmPostController {
 
     private final PostService postService;
-    private final Rq rq;
 
     record CountResBody(
             long totalCount
