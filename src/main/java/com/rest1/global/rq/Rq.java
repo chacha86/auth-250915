@@ -2,15 +2,16 @@ package com.rest1.global.rq;
 
 import com.rest1.domain.member.member.entity.Member;
 import com.rest1.domain.member.member.service.MemberService;
-import com.rest1.global.exception.ServiceException;
+import com.rest1.global.security.SecurityUser;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -22,56 +23,15 @@ public class Rq {
     private final HttpServletResponse response;
 
     public Member getActor() {
-        String apiKey;
-        String accessToken;
 
-        String headerAuthorization = getHeader("Authorization", "");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityUser principal = (SecurityUser) authentication.getPrincipal();
 
-        if (!headerAuthorization.isBlank()) {
-            if (!headerAuthorization.startsWith("Bearer "))
-                throw new ServiceException("401-2", "Authorization 헤더가 Bearer 형식이 아닙니다.");
+        long id = principal.getId();
+        String username = principal.getUsername();
+        String nickname = principal.getNickname();
 
-            String[] headerAuthorizationBits = headerAuthorization.split(" ", 3);
-
-            apiKey = headerAuthorizationBits[1];
-            accessToken = headerAuthorizationBits.length == 3 ? headerAuthorizationBits[2] : "";
-        } else {
-            apiKey = getCookieValue("apiKey", "");
-            accessToken = getCookieValue("accessToken", "");
-        }
-
-        if (apiKey.isBlank())
-            throw new ServiceException("401-1", "로그인 후 이용해주세요.");
-
-        Member member = null;
-
-        boolean isAccessTokenExists = !accessToken.isBlank();
-        boolean isAccessTokenValid = false;
-
-        if (isAccessTokenExists) {
-            Map<String, Object> payload = memberService.payloadOrNull(accessToken);
-
-            if (payload != null) {
-                long id = (long) payload.get("id");
-                String username = (String) payload.get("username");
-                String nickname = (String) payload.get("nickname");
-
-                member = new Member(id, username, nickname);
-                isAccessTokenValid = true;
-            }
-        }
-
-        if (member == null) {
-            member = memberService
-                    .findByApiKey(apiKey)
-                    .orElseThrow(() -> new ServiceException("401-3", "API 키가 유효하지 않습니다."));
-        }
-
-        if (isAccessTokenExists && !isAccessTokenValid) {
-            String newAccessToken = memberService.genAccessToken(member);
-            setCookie("accessToken", newAccessToken);
-            setHeader("accessToken", newAccessToken);
-        }
+        Member member = new Member(id, username, nickname);
 
         return member;
     }
